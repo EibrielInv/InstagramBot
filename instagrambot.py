@@ -1,5 +1,5 @@
 import os
-#import json
+import json
 import random
 import requests
 
@@ -191,6 +191,14 @@ class bot:
             return None
     
     def send_msg(self, msgs, chat_id, action=False):
+        options = ['¡No puedo detenerme!', '¡Si!', '¡Otra!', '¡Mas fotos!', '¡Maaaaaas!', '¡Quiero ver mas!']
+        option = '📷 {0}'.format(random.choice(options))
+        keys = [[option]]
+        keyboard = {
+            "keyboard": keys,
+            "resize_keyboard": True,
+            "one_time_keyboard": True
+        }
         for msg in msgs:
             if action:
                 data = {
@@ -202,6 +210,8 @@ class bot:
                 'chat_id': chat_id,
                 'text': msg,
             }
+            if len(keys)>0:
+                data['reply_markup'] = json.dumps(keyboard)
             r = self.send_to_bot('sendMessage', data = data)
    
 
@@ -335,15 +345,16 @@ class bot:
                         msgs.append(['https://instagram.com/p/{0}'.format(picture[0])])
                         self.chat_picture(picture[0], chat_id)
                     
-                    if 0 == chat_lenght % 10 and chat_lenght <= 30 and chat_lenght > 1:
-                        msgs.append(['Calificá a {0} en StoreBot:\nhttps://telegram.me/storebot?start={0}'.format(self.bot_username)])
+                    if 0 == chat_lenght % 10 and chat_lenght <= 100:
+                        msgs.append(['Califica con 5 estrellas a {0} en StoreBot!\nhttps://telegram.me/storebot?start={0}'.format(self.bot_username)])
 
-                    self.send_msg(msgs, chat_id, True)
+                    self.send_msg(msgs, chat_id)
+
 
 Bot = bot()
 
 while 1:
-    #Bot.bot_loop()
+    Bot.bot_loop()
     try:
         Bot.bot_loop()
     except KeyboardInterrupt:
